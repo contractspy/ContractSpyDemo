@@ -8,9 +8,8 @@
     "dev": "vite",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build": "tsc -b && vite build",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist -b gh-pages --remote origin"
+    "build": "tsc -b && vite build"
+    
   },
   "dependencies": {
     "lucide-react": "^0.552.0",
