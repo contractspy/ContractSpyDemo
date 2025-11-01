@@ -5,7 +5,7 @@ import { contracts as initialContracts } from "./data/contracts";
 import { evaluateContract } from "./utils/format";
 import type { EnrichedContract } from "./types/contract";
 import logo from "./assets/contractspy-logo.svg";
-import FloatingChat from "./components/floatingChat";
+import FloatingChat from "./components/FloatingChat";
 
 export default function App() {
   const [query, setQuery] = useState<string>("");
