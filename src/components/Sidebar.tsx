@@ -14,6 +14,8 @@ interface Props {
   onCloseMobile?: () => void;
 }
 
+const SIDEBAR_W = 288;
+
 export default function Sidebar({
   categories,
   activeKey,
@@ -33,6 +35,24 @@ export default function Sidebar({
     const onResize = () => setIsMdUp(window.innerWidth >= 768);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // === Header-Höhe messen (nur für paddingTop, nicht für height/top) ===
+  const [headerH, setHeaderH] = useState<number>(0);
+  useEffect(() => {
+    const measure = () => {
+      const el = document.querySelector("header");
+      setHeaderH(el ? el.getBoundingClientRect().height : 0);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    const headerEl = document.querySelector("header");
+    if (ro && headerEl) ro.observe(headerEl);
+    return () => {
+      window.removeEventListener("resize", measure);
+      if (ro && headerEl) ro.unobserve(headerEl);
+    };
   }, []);
 
   // === Kategorien (Fallback) ===
@@ -58,13 +78,21 @@ export default function Sidebar({
 
   // === Styles für normalen Modus (Desktop) und Drawer (Mobile) ===
   const asideBase: React.CSSProperties = {
-    width: 288,
+    width: SIDEBAR_W,
     display: "flex",
     flexDirection: "column",
     borderRight: isMdUp ? "1px solid rgba(0,0,0,.1)" : "none",
     background: "rgba(255,255,255,0.92)",
     backdropFilter: "blur(10px) saturate(160%)",
-    height: "100%",
+
+    // Desktop: fixiert, volle Höhe; Header bleibt darüber → Inhalt per paddingTop unter den Header schieben
+    position: isMdUp ? "fixed" : undefined,
+    left: isMdUp ? 0 : undefined,
+    top: isMdUp ? 0 : undefined,
+    height: "100dvh",
+    overflowY: "auto",
+    zIndex: isMdUp ? 5 : undefined, // Header sollte mit höherem z-index (z. B. 10) darüber liegen
+    paddingTop: isMdUp ? headerH : 0,
   };
 
   const drawerStyles: React.CSSProperties = showAsDrawer
@@ -74,6 +102,7 @@ export default function Sidebar({
         zIndex: 30,
         height: "100dvh",
         boxShadow: "0 10px 30px rgba(0,0,0,.2)",
+        paddingTop: 0, // im Mobile-Drawer kein Header-Offset nötig
       }
     : {};
 
@@ -98,6 +127,9 @@ export default function Sidebar({
           style={overlayStyles}
         />
       )}
+
+      {/* Desktop-Platzhalter, damit der Main-Content rechts nicht unter die fixe Sidebar rutscht */}
+      {isMdUp && <div style={{ width: SIDEBAR_W, flex: "0 0 auto" }} aria-hidden />}
 
       <aside style={{ ...asideBase, ...drawerStyles }}>
         {/* --- Navigation --- */}
