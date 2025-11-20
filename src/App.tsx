@@ -322,7 +322,7 @@ export default function App() {
       {/* ===== Footer ===== */}
       <footer className="px-6 py-4 text-xs text-neutral-500 border-t border-neutral-900">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <span>© {new Date().getFullYear()} ContractSpy – Vertragsmanagement</span>
+          <span> {new Date().getFullYear()} ContractSpy – Vertragsmanagement - Demo for University Project</span>
           <span>Build v0.1</span>
         </div>
       </footer>
